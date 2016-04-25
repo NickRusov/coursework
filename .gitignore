@@ -23,6 +23,7 @@
 *.lib
 
 # Executables
+!phantomjs.exe
 *.exe
 *.out
 *.app

@@ -1,9 +1,15 @@
 ﻿using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Xml;
+using System;
+using System.Threading;
 using System.IO;
+using OpenQA.Selenium;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium.PhantomJS;
+using OpenQA.Selenium.Firefox;
 
 namespace BreadDelivery
 {
@@ -46,23 +52,47 @@ namespace BreadDelivery
 
             static void Main(string[] args)
             {
-                File.WriteAllText("response.xml", GetRoute());
-                //var appender = File.AppendText("with_regions.csv");
-                ////Console.WriteLine(Parse(new FileStream("ex.xml", FileMode.Open)));
-                //using (var sr = new StreamReader("adres.csv"))
-                //{
-                //    string query;
+            var driver = new FirefoxDriver();//new PhantomJSDriver(new PhantomJSOptions());
+            driver.Navigate().GoToUrl("https://yandex.ru/maps/47/nizhny-novgorod/");
+            //driver.Manage().Window.Size = new System.Drawing.Size(800, 600);
+            
+            
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(3));
+            wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("toggle-button_islet-air__icon")));
+            wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("toggle-button_islet-air__icon")));
+            var routesButton = driver.FindElementByClassName("toggle-button_islet-air__icon");
+            routesButton.Click();
+            Thread.Sleep(5 * 1000);
 
-                //    while (!sr.EndOfStream)
-                //    {
-                //        query = sr.ReadLine();
-                //        appender.Write(query);
-                //        appender.Write(';');
-                //        appender.WriteLine(GetRegion(query));
-                //        appender.Flush();
-                //    }
-                //}
-                //appender.Close();
+            var pointFields = driver.FindElementsByXPath("//input[@placeholder=\"Адрес или точка на карте\"]").ToArray();
+            if (pointFields.Length < 1)
+            {
+                Console.WriteLine(" FAIL");
+                return;
             }
+                
+            pointFields[0].SendKeys("Горная, 6а");
+            pointFields[1].SendKeys("Жукова, 20\n");
+            //driver.FindElementById("uniqc1").SendKeys(Keys.Return);
+            Thread.Sleep(5 * 1000);
+            driver.GetScreenshot().SaveAsFile("route.png", System.Drawing.Imaging.ImageFormat.Png);
+            //File.WriteAllText("response.xml", GetRoute());
+            //var appender = File.AppendText("with_regions.csv");
+            ////Console.WriteLine(Parse(new FileStream("ex.xml", FileMode.Open)));
+            //using (var sr = new StreamReader("adres.csv"))
+            //{
+            //    string query;
+
+            //    while (!sr.EndOfStream)
+            //    {
+            //        query = sr.ReadLine();
+            //        appender.Write(query);
+            //        appender.Write(';');
+            //        appender.WriteLine(GetRegion(query));
+            //        appender.Flush();
+            //    }
+            //}
+            //appender.Close();
+        }
         }
 }
