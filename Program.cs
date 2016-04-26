@@ -52,22 +52,24 @@ namespace BreadDelivery
 
             static void Main(string[] args)
             {
-            var driver = new FirefoxDriver();//new PhantomJSDriver(new PhantomJSOptions());
+            var driver = new FirefoxDriver();//FirefoxDriver();//new PhantomJSDriver(new PhantomJSOptions());
             driver.Navigate().GoToUrl("https://yandex.ru/maps/47/nizhny-novgorod/");
-            //driver.Manage().Window.Size = new System.Drawing.Size(800, 600);
+            //driver.Manage().Window.Size = new System.Drawing.Size(1024, 800);
             
             
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(3));
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
             wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("toggle-button_islet-air__icon")));
             wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("toggle-button_islet-air__icon")));
-            var routesButton = driver.FindElementByClassName("toggle-button_islet-air__icon");
+            var routesButton = driver.FindElementByClassName("toggle-button_islet-air__text");
             routesButton.Click();
             Thread.Sleep(5 * 1000);
 
             var pointFields = driver.FindElementsByXPath("//input[@placeholder=\"Адрес или точка на карте\"]").ToArray();
             if (pointFields.Length < 1)
             {
-                Console.WriteLine(" FAIL");
+                Console.WriteLine("FAIL");
+                driver.GetScreenshot().SaveAsFile("lastView.png", System.Drawing.Imaging.ImageFormat.Png);
+                driver.Quit();
                 return;
             }
                 
@@ -75,6 +77,12 @@ namespace BreadDelivery
             pointFields[1].SendKeys("Жукова, 20\n");
             //driver.FindElementById("uniqc1").SendKeys(Keys.Return);
             Thread.Sleep(5 * 1000);
+            
+            var jams = driver.FindElementByClassName("checkbox_islet__control");
+            jams.Click();
+            
+            var routeInfo = driver.FindElementByClassName("route-view_driving__route-title-text");
+            Console.WriteLine("INFO: " + routeInfo.Text);
             driver.GetScreenshot().SaveAsFile("route.png", System.Drawing.Imaging.ImageFormat.Png);
             //File.WriteAllText("response.xml", GetRoute());
             //var appender = File.AppendText("with_regions.csv");
@@ -93,6 +101,7 @@ namespace BreadDelivery
             //    }
             //}
             //appender.Close();
+            driver.Quit();
         }
         }
 }
