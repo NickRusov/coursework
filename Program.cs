@@ -5,7 +5,6 @@ using System;
 using System.Threading;
 using System.IO;
 using OpenQA.Selenium;
-using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.PhantomJS;
@@ -50,58 +49,64 @@ namespace BreadDelivery
                 }
             }
 
+
+        //static void Main(string[] args)
+        //{
+        //    Geocoder.PrintCoord();
+        //}
             static void Main(string[] args)
             {
-            var driver = new FirefoxDriver();//FirefoxDriver();//new PhantomJSDriver(new PhantomJSOptions());
-            driver.Navigate().GoToUrl("https://yandex.ru/maps/47/nizhny-novgorod/");
-            //driver.Manage().Window.Size = new System.Drawing.Size(1024, 800);
+                var driver = new FirefoxDriver();//FirefoxDriver();//new PhantomJSDriver(new PhantomJSOptions());
+                driver.Navigate().GoToUrl("https://yandex.ru/maps/47/nizhny-novgorod/");
+                //driver.Manage().Window.Size = new System.Drawing.Size(1024, 800);
             
             
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-            wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("toggle-button_islet-air__icon")));
-            wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("toggle-button_islet-air__icon")));
-            var routesButton = driver.FindElementByClassName("toggle-button_islet-air__text");
-            routesButton.Click();
-            Thread.Sleep(5 * 1000);
+                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+                wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("toggle-button_islet-air__icon")));
+                wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("toggle-button_islet-air__icon")));
+                var routesButton = driver.FindElementByClassName("toggle-button_islet-air__text");
+                routesButton.Click();
+                Thread.Sleep(5 * 1000);
 
-            var pointFields = driver.FindElementsByXPath("//input[@placeholder=\"Адрес или точка на карте\"]").ToArray();
-            if (pointFields.Length < 1)
-            {
-                Console.WriteLine("FAIL");
-                driver.GetScreenshot().SaveAsFile("lastView.png", System.Drawing.Imaging.ImageFormat.Png);
-                driver.Quit();
-                return;
-            }
+                var pointFields = driver.FindElementsByXPath("//input[@placeholder=\"Адрес или точка на карте\"]").ToArray();
+                if (pointFields.Length < 1)
+                {
+                    Console.WriteLine("FAIL");
+                    driver.GetScreenshot().SaveAsFile("lastView.png", System.Drawing.Imaging.ImageFormat.Png);
+                    driver.Quit();
+                    return;
+                }
                 
-            pointFields[0].SendKeys("Горная, 6а");
-            pointFields[1].SendKeys("Жукова, 20\n");
-            //driver.FindElementById("uniqc1").SendKeys(Keys.Return);
-            Thread.Sleep(5 * 1000);
+                pointFields[0].SendKeys("56.317892 43.98793");
+                pointFields[1].SendKeys("56.316659 44.029046\n");
+                //driver.FindElementById("uniqc1").SendKeys(Keys.Return);
+                Thread.Sleep(5 * 1000);
             
-            var jams = driver.FindElementByClassName("checkbox_islet__control");
-            jams.Click();
-            
-            var routeInfo = driver.FindElementByClassName("route-view_driving__route-title-text");
-            Console.WriteLine("INFO: " + routeInfo.Text);
-            driver.GetScreenshot().SaveAsFile("route.png", System.Drawing.Imaging.ImageFormat.Png);
-            //File.WriteAllText("response.xml", GetRoute());
-            //var appender = File.AppendText("with_regions.csv");
-            ////Console.WriteLine(Parse(new FileStream("ex.xml", FileMode.Open)));
-            //using (var sr = new StreamReader("adres.csv"))
-            //{
-            //    string query;
+                var jams = driver.FindElementByClassName("checkbox_islet__control");
+                jams.Click();
+                Thread.Sleep(3 * 1000);
 
-            //    while (!sr.EndOfStream)
-            //    {
-            //        query = sr.ReadLine();
-            //        appender.Write(query);
-            //        appender.Write(';');
-            //        appender.WriteLine(GetRegion(query));
-            //        appender.Flush();
-            //    }
-            //}
-            //appender.Close();
-            driver.Quit();
+                var routeInfo = driver.FindElementByClassName("route-view_driving__route-title-text");
+                Console.WriteLine("INFO: " + routeInfo.Text);
+                driver.GetScreenshot().SaveAsFile("route.png", System.Drawing.Imaging.ImageFormat.Png);
+                //File.WriteAllText("response.xml", GetRoute());
+                //var appender = File.AppendText("with_regions.csv");
+                ////Console.WriteLine(Parse(new FileStream("ex.xml", FileMode.Open)));
+                //using (var sr = new StreamReader("adres.csv"))
+                //{
+                //    string query;
+
+                //    while (!sr.EndOfStream)
+                //    {
+                //        query = sr.ReadLine();
+                //        appender.Write(query);
+                //        appender.Write(';');
+                //        appender.WriteLine(GetRegion(query));
+                //        appender.Flush();
+                //    }
+                //}
+                //appender.Close();
+                driver.Quit();
         }
         }
 }
