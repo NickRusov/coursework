@@ -30,4 +30,6 @@
 
 bin
 obj
+packages
+packages.config
 .vs
