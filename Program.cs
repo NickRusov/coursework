@@ -11,6 +11,7 @@ using OpenQA.Selenium.PhantomJS;
 using OpenQA.Selenium.Firefox;
 using System.Collections.Generic;
 using System.Text;
+using System.Globalization;
 
 namespace BreadDelivery
 {
@@ -25,6 +26,8 @@ namespace BreadDelivery
             {
                 string[] rawCustomer;
                 char[] sep = { ';' };
+                CultureInfo ci = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+                ci.NumberFormat.CurrencyDecimalSeparator = ".";
 
                 while (!sr.EndOfStream)
                 {
@@ -32,16 +35,16 @@ namespace BreadDelivery
                     currentCustomer.Id = ++order;
                     currentCustomer.Address = rawCustomer[0];
                     currentCustomer.hasEuroLot = (rawCustomer[1] == "Евро");
-                    Console.WriteLine(rawCustomer[2]);
-                    currentCustomer.Demand = float.Parse(rawCustomer[2], System.Globalization.NumberStyles.AllowDecimalPoint);
+                    //Console.WriteLine(rawCustomer[2]);
+                    currentCustomer.Demand = float.Parse(rawCustomer[2], System.Globalization.NumberStyles.Any, ci);
                     //Console.WriteLine(rawCustomer[3]);
-                    //currentCustomer.Latitude = float.Parse(rawCustomer[3], System.Globalization.NumberStyles.Float, );
+                    currentCustomer.Latitude = float.Parse(rawCustomer[3], System.Globalization.NumberStyles.Any, ci);
                     //Console.WriteLine(rawCustomer[4]);
-                    //currentCustomer.Longitude = float.Parse(rawCustomer[4]);
+                    currentCustomer.Longitude = float.Parse(rawCustomer[4], System.Globalization.NumberStyles.Any, ci);
                 }
                 customers.Add(currentCustomer);
             }
-
+            Console.WriteLine("DONE!");
             return customers;
         }
 
@@ -86,12 +89,12 @@ namespace BreadDelivery
     //}
         static void Main(string[] args)
         {
-            var customers = ReadCsvWithCustomers(@"C:\Users\user\Documents\coursework\shops_filtered.csv");
+            var customers = ReadCsvWithCustomers(@"C:\Users\Пользователь\Desktop\Магистратура\coursework\shops_filtered.csv");
             Console.ReadKey();
 
-            var driver = new FirefoxDriver();//FirefoxDriver();//new PhantomJSDriver(new PhantomJSOptions());
+            var driver = new PhantomJSDriver();//FirefoxDriver();//new PhantomJSDriver(new PhantomJSOptions());
             driver.Navigate().GoToUrl("https://yandex.ru/maps/47/nizhny-novgorod/");
-            //driver.Manage().Window.Size = new System.Drawing.Size(1024, 800);
+            driver.Manage().Window.Size = new System.Drawing.Size(1024, 800);
             
             
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
