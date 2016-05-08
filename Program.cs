@@ -44,7 +44,7 @@ namespace BreadDelivery
                 }
                 customers.Add(currentCustomer);
             }
-            Console.WriteLine("DONE!");
+            
             return customers;
         }
 
@@ -90,13 +90,14 @@ namespace BreadDelivery
         static void Main(string[] args)
         {
             var customers = ReadCsvWithCustomers(@"C:\Users\Пользователь\Desktop\Магистратура\coursework\shops_filtered.csv");
-            Console.ReadKey();
+            //Console.ReadKey();
 
-            var driver = new PhantomJSDriver();//FirefoxDriver();//new PhantomJSDriver(new PhantomJSOptions());
+            var driver = new FirefoxDriver();//FirefoxDriver();//new PhantomJSDriver(new PhantomJSOptions());
             driver.Navigate().GoToUrl("https://yandex.ru/maps/47/nizhny-novgorod/");
-            driver.Manage().Window.Size = new System.Drawing.Size(1024, 800);
-            
-            
+            Console.WriteLine("DONE!");
+            //driver.Manage().Window.Size = new System.Drawing.Size(1024, 800);
+
+
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
             wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("toggle-button_islet-air__icon")));
             wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("toggle-button_islet-air__icon")));
@@ -112,7 +113,10 @@ namespace BreadDelivery
                 driver.Quit();
                 return;
             }
-                
+
+
+            
+            // cycle body
             pointFields[0].SendKeys("56.317892 43.98793");
             pointFields[1].SendKeys("56.320473 43.998288\n");
 
@@ -125,9 +129,33 @@ namespace BreadDelivery
             var routeInfo = driver.FindElementByClassName("route-view_driving__route-title");
             Console.WriteLine("INFO: " + routeInfo.Text);
             Console.WriteLine(driver.FindElementByClassName("route-view_driving__route-subtitle").Text);// route-view_driving__route-subtitle
-            driver.GetScreenshot().SaveAsFile("route.png", System.Drawing.Imaging.ImageFormat.Png);
+
+            var appender = File.AppendText("routes.csv");
+            for (int i = 0; i < customers.Count; i++)
+            {
+                pointFields[0].SendKeys(customers[i].CoordString);
+                appender.Write(i.ToString() + ": ");
+                for (int j = 0; j < customers.Count; j++)
+                {
+                    if (i != j)
+                    {
+                        pointFields[1].SendKeys(customers[j].CoordString + "\n");
+                        wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("route-view_driving__route-title")));
+                        routeInfo = driver.FindElementByClassName("route-view_driving__route-title");
+                        appender.Write(routeInfo.Text + ";");
+                    }
+                    else
+                    {
+                        appender.Write("0 , 0 ;");
+                    }
+                    appender.Flush();
+                }
+                appender.WriteLine();
+            }
+            appender.Close();
+
+            //driver.GetScreenshot().SaveAsFile("route.png", System.Drawing.Imaging.ImageFormat.Png);
             //File.WriteAllText("response.xml", GetRoute());
-            //var appender = File.AppendText("with_regions.csv");
             ////Console.WriteLine(Parse(new FileStream("ex.xml", FileMode.Open)));
             //using (var sr = new StreamReader("adres.csv"))
             //{

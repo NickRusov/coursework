@@ -14,5 +14,6 @@ namespace BreadDelivery
         public float Demand;
         public float Latitude;
         public float Longitude;
+        public string CoordString { get { return string.Format("{0} {1}", Latitude, Longitude); } }
     }
 }
