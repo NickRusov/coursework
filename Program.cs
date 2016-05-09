@@ -41,8 +41,9 @@ namespace BreadDelivery
                     currentCustomer.Latitude = float.Parse(rawCustomer[3], System.Globalization.NumberStyles.Any, ci);
                     //Console.WriteLine(rawCustomer[4]);
                     currentCustomer.Longitude = float.Parse(rawCustomer[4], System.Globalization.NumberStyles.Any, ci);
+                    customers.Add(currentCustomer);
                 }
-                customers.Add(currentCustomer);
+                
             }
             
             return customers;
@@ -89,7 +90,7 @@ namespace BreadDelivery
     //}
         static void Main(string[] args)
         {
-            var customers = ReadCsvWithCustomers(@"C:\Users\Пользователь\Desktop\Магистратура\coursework\shops_filtered.csv");
+            var customers = ReadCsvWithCustomers(@"C:\Users\user\Documents\coursework\shops_filtered.csv");
             //Console.ReadKey();
 
             var driver = new FirefoxDriver();//FirefoxDriver();//new PhantomJSDriver(new PhantomJSOptions());
